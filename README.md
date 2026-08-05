@@ -55,7 +55,7 @@ sistema-notas-rad/
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/sistema-notas-rad.git
+git clone https://github.com/mathbittencourt10-netizen/sistema-notas-rad.git
 cd sistema-notas-rad
 ```
 

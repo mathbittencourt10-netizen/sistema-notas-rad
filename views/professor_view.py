@@ -141,7 +141,7 @@ class ProfessorView(tk.Tk):
 
         s = ttk.Style()
         s.configure("Treeview.Heading",
-                    background="#0B2545", foreground="white",
+                    background="#F0F4F8", foreground="black",
                     font=("Arial", 10, "bold"))
         s.configure("Treeview", rowheight=28, font=("Arial", 10))
         s.map("Treeview", background=[("selected", "#1C7293")])

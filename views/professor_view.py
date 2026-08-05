@@ -12,6 +12,8 @@ class ProfessorView(tk.Tk):
         self.usuario    = usuario
         self.controller = NotaController()
         self.aluno_selecionado = None
+        self.filtro_var   = tk.StringVar(value="Todos")
+        self.btns_filtro  = {}
         self._configurar()
         self._criar_interface()
         self._carregar_tabela()
@@ -113,6 +115,25 @@ class ProfessorView(tk.Tk):
                   relief="flat", cursor="hand2",
                   activebackground="#A93226", activeforeground="white",
                   command=self._excluir).pack(side="right")
+
+        # Filtro por situação
+        filtro_frame = tk.Frame(frame, bg="#F0F4F8", padx=10, pady=2)
+        filtro_frame.pack(fill="x")
+        tk.Label(filtro_frame, text="Filtrar:", font=("Arial", 9),
+                 fg="#555", bg="#F0F4F8").pack(side="left", padx=(0, 6))
+        for label, cor_ativa, cor_inativa, fg_inativa in [
+            ("Todos",          "#718096", "#E2E8F0", "#718096"),
+            ("Aprovado",       "#27AE60", "#EAFAF1", "#27AE60"),
+            ("Em Recuperação", "#F39C12", "#FEF9E7", "#F39C12"),
+            ("Reprovado",      "#E74C3C", "#FDEDEC", "#E74C3C"),
+        ]:
+            btn = tk.Button(filtro_frame, text=label,
+                            font=("Arial", 9), relief="flat", cursor="hand2",
+                            padx=10, pady=3,
+                            command=lambda l=label: self._aplicar_filtro(l))
+            btn.pack(side="left", padx=2)
+            self.btns_filtro[label] = (btn, cor_ativa, cor_inativa, fg_inativa)
+        self._atualizar_botoes_filtro("Todos")
 
         # Treeview
         cols = ("Aluno", "Nota 1", "Nota 2", "Média", "Situação")
@@ -244,9 +265,24 @@ class ProfessorView(tk.Tk):
             self._status(f"✔  Aluno '{nome}' removido com sucesso!")
 
     def _buscar(self):
-        texto = self.entry_busca.get().strip()
-        dados = self.controller.buscar_por_nome(texto) if texto else self.controller.listar_todos()
+        texto  = self.entry_busca.get().strip()
+        filtro = self.filtro_var.get()
+        dados  = self.controller.buscar_por_nome(texto) if texto else self.controller.listar_todos()
+        if filtro != "Todos":
+            dados = [d for d in dados if d.get("Situação") == filtro]
         self._carregar_tabela(dados)
+
+    def _aplicar_filtro(self, situacao: str):
+        self.filtro_var.set(situacao)
+        self._atualizar_botoes_filtro(situacao)
+        self._buscar()
+
+    def _atualizar_botoes_filtro(self, ativo: str):
+        for label, (btn, cor_ativa, cor_inativa, fg_inativa) in self.btns_filtro.items():
+            if label == ativo:
+                btn.config(bg=cor_ativa, fg="white")
+            else:
+                btn.config(bg=cor_inativa, fg=fg_inativa)
 
     def _logout(self):
         if messagebox.askyesno("Sair", "Deseja sair do sistema?", parent=self):

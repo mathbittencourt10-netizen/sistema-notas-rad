@@ -57,7 +57,7 @@ class AlunoView(tk.Tk):
 
         s = ttk.Style()
         s.configure("Treeview.Heading",
-                    background="#0B2545", foreground="white",
+                    background="#0B2545", foreground="black",
                     font=("Arial", 10, "bold"))
         s.configure("Treeview", rowheight=32, font=("Arial", 11))
 
